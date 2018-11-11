@@ -21,11 +21,11 @@ dl.unhide > dt {
 	color: #339900;
 }
 
-dl.hide > dt {
+dl.hi > dt {
 	color: #990000;
 }
 
-dl.hide > dd {
+dl.hi > dd {
 	color: #ff0000;
 	font-weight: bold;
 }
