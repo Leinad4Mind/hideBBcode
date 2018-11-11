@@ -136,9 +136,6 @@ class listener implements EventSubscriberInterface
 		
 		$this->bPosted = $this->check_user_posted_by_topicId($topic_id);
 		$this->bThanked = $this->check_posts_thanked_by_topicId($topic_id);
-        // if ($bPosted || $bThanked) {
-        //     $this->b_topic_replied = true;
-        // }
 	}
 
 	/**
