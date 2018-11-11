@@ -130,8 +130,11 @@ class listener implements EventSubscriberInterface
 	{
 		$topic_id = $event['topic_id'];
 		
-		$this->check_user_posted_by_topicId($topic_id);
-		$this->check_posts_thanked_by_topicId($topic_id);
+		$bPosted = $this->check_user_posted_by_topicId($topic_id);
+		$bThanked = $this->check_posts_thanked_by_topicId($topic_id);
+        if ($bPosted || $bThanked) {
+            $this->b_topic_replied = true;
+        }
 	}
 
 	/**
@@ -276,7 +279,7 @@ class listener implements EventSubscriberInterface
 	*/
 	private function check_posts_thanked_by_topicId($topic_id)
 	{
-		$this->check_posts_thanked_by('topic_id', $topic_id);
+		return $this->check_posts_thanked_by('topic_id', $topic_id);
 	}
 
 	/**
@@ -286,7 +289,7 @@ class listener implements EventSubscriberInterface
 	*/
 	private function check_posts_thanked_by_postId($post_id)
 	{
-		$this->check_posts_thanked_by('post_id', $post_id);
+		return $this->check_posts_thanked_by('post_id', $post_id);
 	}
 
 	/**
@@ -313,7 +316,9 @@ class listener implements EventSubscriberInterface
 				$this->a_TFP_topic_posts_thanked[] = $row['post_id'];
 			}
 			$this->db->sql_freeresult($result);
+            return !empty($this->a_TFP_topic_posts_thanked);
 		}
+        return false;
 	}
 
 	
