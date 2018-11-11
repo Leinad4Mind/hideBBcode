@@ -14,6 +14,10 @@ namespace marcovo\hideBBcode\event;
 */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+function prn($strn) {
+    echo "$strn<br>";
+}
+
 /**
 * Event listener
 */
@@ -130,11 +134,11 @@ class listener implements EventSubscriberInterface
 	{
 		$topic_id = $event['topic_id'];
 		
-		$bPosted = $this->check_user_posted_by_topicId($topic_id);
-		$bThanked = $this->check_posts_thanked_by_topicId($topic_id);
-        if ($bPosted || $bThanked) {
-            $this->b_topic_replied = true;
-        }
+		$this->bPosted = $this->check_user_posted_by_topicId($topic_id);
+		$this->bThanked = $this->check_posts_thanked_by_topicId($topic_id);
+        // if ($bPosted || $bThanked) {
+        //     $this->b_topic_replied = true;
+        // }
 	}
 
 	/**
@@ -217,6 +221,12 @@ class listener implements EventSubscriberInterface
 		}
 
 		$this->template->assign_var('S_HIDE_REFRESH_ON_QR', $this->config['hidebbcode_unhide_reply'] && !$this->b_topic_replied && !$this->b_forceUnhide);
+        $bReplied     = $this->b_topic_replied;
+        $bForceEnable = $this->b_forceUnhide;
+        if ($this->config['hidebbcode_unhide_reply']) {
+            return ($bReplied || $bForceEnable);
+        }
+        return false;
 	}
 
 	/**
@@ -526,7 +536,7 @@ class listener implements EventSubscriberInterface
 		{
 			return $bbcode->bbcode_tpl('unhide_open') . str_replace('{unhide:'.$this->hbuid.'}', '', $matches[1]) . $bbcode->bbcode_tpl('unhide_close');
 		}
-		else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide)
+		else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide || ($this->config['hidebbcode_unhide_tfp'] && $this->bThanked))
 		{
 			return $bbcode->bbcode_tpl('unhide_open') . $matches[1] . $bbcode->bbcode_tpl('unhide_close');
 		}
