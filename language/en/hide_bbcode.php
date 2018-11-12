@@ -44,8 +44,8 @@ if (empty($lang) || !is_array($lang))
  */ 
 $lang = array_merge($lang, array(
 	'HIDEBB_HIDDEN_MESSAGE'			=> 'This message has been hidden',
-	'HIDEBB_MESSAGE_UNHIDE'			=> 'Hidden Content',
-	'HIDEBB_MESSAGE_HIDDEN'			=> 'Hidden Content',
+	'HIDEBB_MESSAGE_UNHIDE'			=> 'Unlocked Content',
+	'HIDEBB_MESSAGE_HIDDEN'			=> 'Locked Content',
     'HIDEBB_MESSAGE_HIDDEN_DESCRIPTION' => 'Please press the thank you button or post a reply to see the hidden content.',
 	'HIDEBB_TFP_NO_DELETE'			=> 'Deleting thanks is disabled for this post as there is a [hide]-BBCode present in the post.',
 
