@@ -22,11 +22,11 @@ dl.unhide > dt {
 }
 
 dl.hi > dt {
-	color: #990000;
+	color: #773300;
 }
 
 dl.hi > dd {
-	color: #ff0000;
+	color: #773300;
 	font-weight: bold;
 }
 
