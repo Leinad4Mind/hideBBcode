@@ -83,7 +83,7 @@ class listener implements EventSubscriberInterface
 			
 			'gfksx.thanksforposts.delete_thanks_before'	=> 'TFP_delete_thanks_before',
 
-			// 'core.search_modify_rowset'		=> 'search_modify_rowset',
+            'core.search_modify_rowset'		=> 'search_modify_rowset',
 		);
 	}
 
