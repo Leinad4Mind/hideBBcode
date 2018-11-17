@@ -14,8 +14,18 @@ namespace marcovo\hideBBcode\event;
 */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-function prn($strn) {
-    echo "$strn<br>";
+function prn($var) {
+    if (is_array($var)){
+        foreach ($var as $k => $v){
+            if (is_array($v)){
+                echo "$k => ";
+            } else {
+                prn($v);
+            }
+        }
+    } else {
+        echo "$var<br>";
+    }
 }
 
 /**
@@ -115,9 +125,9 @@ class listener implements EventSubscriberInterface
 			$s_hidden_attach	.= ' '.$this->user->lang['HIDEBB_MESSAGE_HIDDEN_ATTACH_THANK'];
 		}
 		
-		$this->user->lang['HIDEBB_HIDE_HELPLINE'] = $s_helpline;
-		$this->user->lang['HIDEBB_MESSAGE_HIDDEN_DESCRIPTION'] = $s_hidden_desc;
-		$this->user->lang['HIDEBB_MESSAGE_HIDDEN_ATTACH'] = $s_hidden_attach;
+		// $this->user->lang['HIDEBB_HIDE_HELPLINE'] = $s_helpline;
+		// $this->user->lang['HIDEBB_MESSAGE_HIDDEN_DESCRIPTION'] = $s_hidden_desc;
+		// $this->user->lang['HIDEBB_MESSAGE_HIDDEN_ATTACH'] = $s_hidden_attach;
 		
 	}
 
@@ -539,7 +549,24 @@ class listener implements EventSubscriberInterface
 		}
 		else
 		{
-			return $bbcode->bbcode_tpl('hide');
+            $bReply = $this->config['hidebbcode_unhide_reply'];
+            $bThank = $this->config['hidebbcode_unhide_tfp'];
+            if ($bReply && $bThank) 
+            {
+                return $bbcode->bbcode_tpl('hide_both');
+            } 
+            else if ($bThank) 
+            {
+                return $bbcode->bbcode_tpl('hide_thanks');
+            }
+            else if ($bReply)
+            {
+                return $bbcode->bbcode_tpl('hide_reply');
+            }
+            else
+            {
+                return $bbcode->bbcode_tpl('hide');
+            }
 		}
 
 	}
