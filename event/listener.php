@@ -83,7 +83,7 @@ class listener implements EventSubscriberInterface
 			
 			'gfksx.thanksforposts.delete_thanks_before'	=> 'TFP_delete_thanks_before',
 
-			'core.search_modify_rowset'		=> 'search_modify_rowset',
+			// 'core.search_modify_rowset'		=> 'search_modify_rowset',
 		);
 	}
 
@@ -534,28 +534,28 @@ class listener implements EventSubscriberInterface
 	*/
 	protected function hidden_pass($matches)
 	{
-		$this->template->set_style(array('styles', 'ext/marcovo/hideBBcode/styles'));
+        $this->template->set_style(array('styles', 'ext/marcovo/hideBBcode/styles'));
+        include_once('includes/bbcode.php');
+        $bbcode = new \bbcode();
+        $bbcode->template_filename = $this->template->get_source_file_for_handle('hide_bbcode.html');
 
-		$bbcode = new \bbcode();
-		$bbcode->template_filename = $this->template->get_source_file_for_handle('hide_bbcode.html');
-
-		if (strpos($matches[1], '{unhide:'.$this->hbuid.'}') === 0)
-		{
-			return $bbcode->bbcode_tpl('unhide_open') . str_replace('{unhide:'.$this->hbuid.'}', '', $matches[1]) . $bbcode->bbcode_tpl('unhide_close');
-		}
-		else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide || ($this->config['hidebbcode_unhide_tfp'] && $this->bThanked))
-		{
-			return $bbcode->bbcode_tpl('unhide_open') . $matches[1] . $bbcode->bbcode_tpl('unhide_close');
-		}
-		else
-		{
+        if (strpos($matches[1], '{unhide:'.$this->hbuid.'}') === 0)
+        {
+            return $bbcode->bbcode_tpl('unhide_open') . str_replace('{unhide:'.$this->hbuid.'}', '', $matches[1]) . $bbcode->bbcode_tpl('unhide_close');
+        }
+        else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide || ($this->config['hidebbcode_unhide_tfp'] && $this->bThanked))
+        {
+            return $bbcode->bbcode_tpl('unhide_open') . $matches[1] . $bbcode->bbcode_tpl('unhide_close');
+        }
+        else
+        {
             $bReply = $this->config['hidebbcode_unhide_reply'];
             $bThank = $this->config['hidebbcode_unhide_tfp'];
-            if ($bReply && $bThank) 
+            if ($bReply && $bThank)
             {
                 return $bbcode->bbcode_tpl('hide_both');
-            } 
-            else if ($bThank) 
+            }
+            else if ($bThank)
             {
                 return $bbcode->bbcode_tpl('hide_thanks');
             }
@@ -567,7 +567,7 @@ class listener implements EventSubscriberInterface
             {
                 return $bbcode->bbcode_tpl('hide');
             }
-		}
+        }
 
 	}
 	
@@ -581,6 +581,7 @@ class listener implements EventSubscriberInterface
 	{
 		$this->template->set_style(array('styles', 'ext/marcovo/hideBBcode/styles'));
 
+        include_once('includes/bbcode.php');
 		$bbcode = new \bbcode();
 		$bbcode->template_filename = $this->template->get_source_file_for_handle('hide_bbcode.html');
 
