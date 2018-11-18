@@ -14,6 +14,36 @@ Caution should be taken with these extensions:
  * Configure the extension under ACP -> Extensions -> [HIDE] BBCODE -> General settings
 
 
+```
+#!/bin/sh
+
+# Define path
+TMP_PATH="/tmp"
+PHPBB_PATH="/var/www/phpbb/"
+PHPBB_EXT_PATH="/var/www/phpbb/ext/"
+
+# Purge cache
+cd $PHPBB_PATH
+cd cache
+rm -r production
+
+# Install thanks for posts
+cd $TMP_PATH
+rm -r thanks_for_posts
+git clone https://github.com/Naguissa/thanks_for_posts.git
+cd thanks_for_posts
+git checkout tags/3.2.11 -b 3.2.11
+cp -r gfksx/ $PHPBB_EXT_PATH
+
+# Install hidebbcode
+cd $PHPBB_EXT_PATH
+mkdir -p $PHPBB_EXT_PATH/marcovo
+cd marcovo
+rm -r hideBBcode
+git clone git@github.com:johnelliotbaker/hideBBcode.git 
+```
+
+
  [1]: https://github.com/rxu/thanks_for_posts
  [2]: https://github.com/Tatiana5/QuickReply
  [3]: https://github.com/VSEphpbb/topicpreview
