@@ -140,16 +140,16 @@ class listener implements EventSubscriberInterface
 	*
 	* @param object $event The event object
 	*/
-	public function check_user_posted_viewtopic($event)
-	{
+    public function check_user_posted_viewtopic($event)
+    {
         // In case only thanks is required to reveal,
         // we need to make sure the OP can see the hidden content.
         // Check if current user is the OP and set b_forceUnhide
-		$topic_id = $event['topic_id'];
-		$user_id = $this->user->data['user_id'];
-		$sql = "SELECT topic_poster, topic_id
-				FROM " . TOPICS_TABLE . "
-				WHERE topic_id = ".$topic_id." "; 
+        $topic_id = $event['topic_id'];
+        $user_id = $this->user->data['user_id'];
+        $sql = "SELECT topic_poster, topic_id
+            FROM " . TOPICS_TABLE . "
+            WHERE topic_id = ".$topic_id." "; 
         $result = $this->db->sql_query($sql);
         $row = $this->db->sql_fetchrow($result);
         $topic_id = $row['topic_id'];
@@ -165,7 +165,7 @@ class listener implements EventSubscriberInterface
 
         // Check if a user has thanked
         $this->bThanked = $this->check_posts_thanked_by_topicId($topic_id);
-	}
+    }
 
 	/**
 	* Check whether texts need to be hidden for the post/topic
