@@ -553,6 +553,10 @@ class listener implements EventSubscriberInterface
      */
     protected function hidden_pass($matches)
     {
+        global $auth, $request;
+        $forum_id = $request->variable("f", "");
+        if ($auth->acl_get('m_', $forum_id)) { $this->b_forceUnhide = true; }
+
         $this->template->set_style(array('styles', 'ext/marcovo/hideBBcode/styles'));
         include_once('includes/bbcode.php');
         $bbcode = new \bbcode();
