@@ -527,8 +527,20 @@ class listener implements EventSubscriberInterface
      */
     public function parse_bbcodes_after($event)
     {
-
-        $event['text'] = preg_replace_callback('#<!-- HIDE_BBCODE -->(.*?)<!-- /HIDE_BBCODE -->#s', array($this, 'hidden_pass'), $event['text']);
+        ///////////// DOCMOD ////////////////
+        global $request;
+        $mode = $request->variable('mode', '');
+        if ($mode == 'sig')
+        {
+            // $event['text'] = 'WARNING: Because this user signature contains [hide] tag, preview will render is incorrectly.';
+        }
+        else
+        {
+            $event['text'] = preg_replace_callback('#<!-- HIDE_BBCODE -->(.*?)<!-- /HIDE_BBCODE -->#s', array($this, 'hidden_pass'), $event['text']);
+        }
+        /////////////////////////////////////
+        // $event['text'] = preg_replace_callback('#<!-- HIDE_BBCODE -->(.*?)<!-- /HIDE_BBCODE -->#s', array($this, 'hidden_pass'), $event['text']);
+        /////////////////////////////////////
 
     }
 
