@@ -14,17 +14,18 @@ namespace marcovo\hideBBcode\event;
  */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-function prn($var) {
-    if (is_array($var)){
-        foreach ($var as $k => $v){
-            if (is_array($v)){
-                echo "$k => ";
-            } else {
-                prn($v);
-            }
-        }
+function prn($var, $b_html=false) {
+    if (is_array($var))
+    { foreach ($var as $k => $v) { echo "... $k => "; prn($v, $b_html); }
     } else {
-        echo "$var<br>";
+        if ($b_html)
+        {
+            echo htmlspecialchars($var) . '<br>';
+        }
+        else
+        {
+            echo $var . '<br>';
+        }
     }
 }
 
@@ -369,33 +370,50 @@ class listener implements EventSubscriberInterface
      */
     public function search_modify_rowset($event)
     {
+        global $request;
+        include_once('includes/functions_content.php');
+        // If there is a target the full post is shown, else only digest
+        // This needs to be dealt differently
+        $target = $request->variable('t', '');
+        // We want to remove resource inks when not in target mode
+        $a_file_host = ['drive.google.com', 'mega.nz', 'links.snahp.it', 'zippyshare.com'];
+        $s_file_host = join('|', $a_file_host);
+        $ptn_file_host = '#(' . join('|', $a_file_host) . ')([^\s|`])*#is';
+        //
         $a_postIds = array();
         $a_topicIds = array();
-
         $rowset = $event['rowset'];
         foreach($rowset as $row)
         {
             $a_postIds[$row['post_id']] = 1;
             $a_topicIds[$row['topic_id']] = 1;
         }
-
         $a_postIds = array_keys($a_postIds);
         $a_topicIds = array_keys($a_topicIds);
-
         $a_topic_replied = $this->check_user_posted_by_topicIds($a_topicIds);
         $this->check_posts_thanked_by_postId($a_postIds);
-
         foreach($rowset as $key => $row)
         {
             $post_id = $row['post_id'];
             $topic_id = $row['topic_id'];
-
+            $text = $rowset[$key]['post_text'];
+            $text = generate_text_for_edit($text, '', 0)['text'];
             if(in_array($post_id, $this->a_TFP_topic_posts_thanked) || $a_topic_replied[$topic_id] === true)
             {
                 $uid = $row['bbcode_uid'];
-
-                $rowset[$key]['post_text'] = str_replace('[hide:'.$uid.']', '[hide:'.$uid.']'.'{unhide:'.$this->hbuid.'}', $row['post_text']);
+                // $rowset[$key]['post_text'] = str_replace('[hide:'.$uid.']', '[hide:'.$uid.']'.'{unhide:'.$this->hbuid.'}', $row['post_text']);
+                $text = preg_replace('#\[hide](.*?)\[/hide]#is', '$1', $text);
             }
+            if (!$target)
+            {
+                $text = preg_replace($ptn_file_host, 'LINK REMOVED', $text);
+            }
+            else
+            {
+                $poll = $uid = $bitfield = $options = ''; 
+                generate_text_for_storage($text, $uid, $bitfield, $options, true, false, true);
+            }
+            $rowset[$key]['post_text'] = $text;
         }
         $event['rowset'] = $rowset;
     }
@@ -578,7 +596,7 @@ class listener implements EventSubscriberInterface
         {
             return $bbcode->bbcode_tpl('unhide_open') . str_replace('{unhide:'.$this->hbuid.'}', '', $matches[1]) . $bbcode->bbcode_tpl('unhide_close');
         }
-        else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide || ($this->config['hidebbcode_unhide_tfp'] && $this->bThanked))
+        else if (($this->config['hidebbcode_unhide_reply'] && $this->b_topic_replied) || $this->b_forceUnhide || ($this->config['hidebbcode_unhide_tfp'] && isset($this->bThanked) && $this->bThanked))
         {
             return $bbcode->bbcode_tpl('unhide_open') . $matches[1] . $bbcode->bbcode_tpl('unhide_close');
         }
