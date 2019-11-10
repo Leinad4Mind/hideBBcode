@@ -370,6 +370,21 @@ class listener implements EventSubscriberInterface
      */
     public function search_modify_rowset($event)
     {
+        // TODO: This is a stopgap.
+        // When the content of hidebox is too long, then hidebox is
+        // stripped by the bbcode formatter and the content is shown. This
+        // code simply removes all post content, but a more surgical
+        // approach is desired.
+        $rowset = $event['rowset'];
+        foreach ($rowset as &$row)
+        {
+            if (isset($row['post_text']))
+            {
+                $row['post_text'] = '';
+            }
+        }
+        $event['rowset'] = $rowset;
+        return;
         global $request;
         include_once('includes/functions_content.php');
         // If there is a target the full post is shown, else only digest
